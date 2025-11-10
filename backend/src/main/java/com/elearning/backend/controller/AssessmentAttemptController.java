@@ -20,7 +20,6 @@ public class AssessmentAttemptController {
         this.service = service;
     }
 
-    // STUDENT: submit or re-submit (overwrites latest)
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public AssessmentAttemptResponse submit(@Valid @RequestBody AssessmentAttemptRequest request,
@@ -28,13 +27,11 @@ public class AssessmentAttemptController {
         return service.submitAttempt(request, auth);
     }
 
-    // STUDENT: list my latest attempts
     @GetMapping
     public List<StudentAttemptSummaryDto> myAttempts(Authentication auth) {
         return service.getMyAttempts(auth);
     }
 
-    // INSTRUCTOR: list latest marks for a specific assessment
     @GetMapping("/by-assessment/{assessmentId}")
     public List<AssessmentAttemptSummaryDto> byAssessment(@PathVariable Long assessmentId) {
         return service.getAttemptsByAssessment(assessmentId);

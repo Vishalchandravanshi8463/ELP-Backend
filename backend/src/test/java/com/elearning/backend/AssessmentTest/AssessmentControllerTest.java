@@ -16,8 +16,7 @@ import static org.mockito.Mockito.*;
 class AssessmentControllerTest {
 
     AssessmentService service = mock(AssessmentService.class);
-    AssessmentRepository repo = mock(AssessmentRepository.class); // Unused in controller
-    AssessmentController controller = new AssessmentController(service, repo);
+    AssessmentController controller = new AssessmentController(service);
 
     @Test
     void getAll_ReturnsAssessmentList() {
