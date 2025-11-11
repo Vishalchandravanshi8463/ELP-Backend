@@ -38,14 +38,21 @@ public class SecurityConfig {
                                 "/docs").permitAll()
 
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/auth/signup").permitAll()
+
                         .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers("/images/**","/css/**","/js/**","/uploads/**").permitAll()
 
                         .requestMatchers("/api/courses/instructor/**").hasRole("INSTRUCTOR")
                         .requestMatchers("/api/test/instructor").hasRole("INSTRUCTOR")
                         .requestMatchers("/api/instructors/**").hasRole("INSTRUCTOR")
+
                         .requestMatchers(HttpMethod.OPTIONS,"/**").permitAll()
+
+                        .requestMatchers("/api/notifications/**").hasRole("STUDENT")
+                        .requestMatchers(HttpMethod.POST, "/api/announcements/**").hasRole("INSTRUCTOR")
+                        .requestMatchers(HttpMethod.GET,  "/api/announcements/**").hasAnyRole("INSTRUCTOR","STUDENT")
+                        .requestMatchers("/api/notifications/**").authenticated()
+                        .requestMatchers("/api/announcements/**").authenticated()
 
                         .requestMatchers("/React/**").hasRole("STUDENT")
                         .requestMatchers("/api/courses/students/**", "/api/enrollments/**").hasRole("STUDENT")
@@ -53,7 +60,6 @@ public class SecurityConfig {
                         .requestMatchers("/api/test/student").hasRole("STUDENT")
 
                        .requestMatchers("/api/courses/**").hasAnyRole("INSTRUCTOR", "STUDENT")
-
 
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/assessment-attempts").hasRole("STUDENT")
                         .requestMatchers(org.springframework.http.HttpMethod.GET,  "/api/assessment-attempts").hasRole("STUDENT")
