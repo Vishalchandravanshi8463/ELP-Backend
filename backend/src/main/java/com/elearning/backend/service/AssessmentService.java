@@ -1,19 +1,14 @@
 package com.elearning.backend.service;
 
-
-
 import com.elearning.backend.dto.AssessmentDto;
 import com.elearning.backend.dto.ScoreResponse;
+import com.elearning.backend.exception.AssessmentNotFoundException;
+import com.elearning.backend.mapper.AssessmentMapper;
 import com.elearning.backend.model.Assessment;
 import com.elearning.backend.model.Question;
-import com.elearning.backend.mapper.AssessmentMapper;
 import com.elearning.backend.repository.AssessmentRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-
 import org.springframework.transaction.annotation.Transactional;
-
 
 import java.util.List;
 import java.util.Map;
@@ -31,17 +26,13 @@ public class AssessmentService {
         return repo.findAll().stream().map(AssessmentMapper::toDto).toList();
     }
 
-
     @Transactional
     public AssessmentDto findById(Long id) {
         Assessment entity = repo.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Assessment not found: " + id));
-
-         entity.getQuestions().forEach(q -> q.getOptions().size());
-
+                .orElseThrow(() -> new AssessmentNotFoundException(id));
+        entity.getQuestions().forEach(q -> q.getOptions().size());
         return AssessmentMapper.toDto(entity);
     }
-
 
     public AssessmentDto create(AssessmentDto dto) {
         Assessment entity = AssessmentMapper.toEntity(dto);
@@ -51,7 +42,7 @@ public class AssessmentService {
 
     public AssessmentDto update(Long id, AssessmentDto dto) {
         Assessment existing = repo.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Assessment not found: " + id));
+                .orElseThrow(() -> new AssessmentNotFoundException(id));
         AssessmentMapper.copyToExisting(dto, existing);
         Assessment saved = repo.save(existing);
         return AssessmentMapper.toDto(saved);
@@ -59,18 +50,15 @@ public class AssessmentService {
 
     public void delete(Long id) {
         if (!repo.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Assessment not found: " + id);
+            throw new AssessmentNotFoundException(id);
         }
         repo.deleteById(id);
     }
 
-
-
     @Transactional
     public ScoreResponse evaluateAnswers(Long id, Map<Integer, Integer> answers) {
         Assessment assessment = repo.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Assessment not found: " + id));
-
+                .orElseThrow(() -> new AssessmentNotFoundException(id));
         List<Question> questions = assessment.getQuestions();
         int total = questions.size();
         int correct = 0;
@@ -84,5 +72,4 @@ public class AssessmentService {
         }
         return new ScoreResponse(total, correct);
     }
-
 }
