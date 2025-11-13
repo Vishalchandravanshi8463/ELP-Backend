@@ -16,25 +16,21 @@ public class NotificationController {
         this.service = service;
     }
 
-    // GET /api/notifications?userId=123
     @GetMapping
     public List<NotificationDTO> list(@RequestParam Long userId) {
         return service.listForUser(userId);
     }
 
-    // GET /api/notifications/unread-count?userId=123
     @GetMapping("/unread-count")
     public Long unreadCount(@RequestParam Long userId) {
         return service.unreadCount(userId);
     }
 
-    // POST /api/notifications
     @PostMapping
     public NotificationDTO create(@RequestBody NotificationDTO dto) {
         return service.create(dto);
     }
 
-    // PUT /api/notifications/{id}/read
     @PutMapping("/{id}/read")
     public NotificationDTO markRead(@PathVariable Long id) {
         return service.markRead(id);

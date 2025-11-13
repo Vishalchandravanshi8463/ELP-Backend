@@ -22,7 +22,7 @@ public class EnrollmentController {
 
     @GetMapping
     public List<EnrollmentDTO> getAll() {
-        return enrollmentService.getEnrollmentsByStudent(null); // not used by FE; FE uses student/course-specific endpoints
+        return enrollmentService.getEnrollmentsByStudent(null);
     }
 
     @GetMapping(params = "studentId")
