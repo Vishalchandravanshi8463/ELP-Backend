@@ -6,11 +6,13 @@ import com.elearning.backend.service.CourseService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -37,6 +39,7 @@ public class CourseController {
             @RequestParam("durationHrs") Integer durationHrs,
             @RequestParam("tags") String tags,
             @RequestParam("instructorId") Long instructorId,
+
             @RequestParam(value = "thumbnail", required = false)MultipartFile thumbnail,
             @RequestParam(value = "video", required = false)MultipartFile video,
             @RequestParam(value = "prerequisite", required = false)MultipartFile prerequisite ) throws Exception {
@@ -82,8 +85,9 @@ public class CourseController {
     }
 
     @DeleteMapping(value = "/{id}")
-    public void deleteCourse(@PathVariable Long id) {
+    public ResponseEntity<?> deleteCourse(@PathVariable Long id) {
         courseService.deleteCourse(id);
+        return ResponseEntity.ok(Map.of("message","Course Deleted"));
     }
 }
 

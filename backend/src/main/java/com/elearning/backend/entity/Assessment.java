@@ -25,7 +25,6 @@ public class Assessment {
     private List<Question> questions = new ArrayList<>();
 
 
-
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
