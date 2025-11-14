@@ -34,8 +34,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 request.getRequestURI()
         );
 
-        ex.printStackTrace(); // ✅ logs error inside console
-
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
@@ -66,7 +64,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 request.getRequestURI()
         );
 
-        ex.printStackTrace();
+       // ex.printStackTrace();
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
@@ -114,6 +112,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(InvalidAssessmentException.class)
     public ResponseEntity<ErrorResponse> handleInvalidAssessment(
             InvalidAssessmentException ex, HttpServletRequest request) {
+
+        ErrorResponse response = new ErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidPasswordException(
+            InvalidPasswordException ex, HttpServletRequest request) {
 
         ErrorResponse response = new ErrorResponse(
                 HttpStatus.BAD_REQUEST,
