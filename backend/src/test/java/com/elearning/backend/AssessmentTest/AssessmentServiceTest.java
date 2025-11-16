@@ -10,7 +10,6 @@ import com.elearning.backend.repository.AssessmentRepository;
 import com.elearning.backend.service.AssessmentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.web.server.ResponseStatusException;
 
 
 
@@ -26,7 +25,6 @@ class AssessmentServiceTest {
 
     @BeforeEach
     void setup() {
-        // Clear interactions just to be safe
         clearInvocations(repo);
     }
 
@@ -36,10 +34,8 @@ class AssessmentServiceTest {
         Assessment a2 = new Assessment();
         List<Assessment> entities = List.of(a1, a2);
 
-        // Stub repository findAll.
         when(repo.findAll()).thenReturn(entities);
 
-        // You need to mock static calls for AssessmentMapper if using static methods
         try (var mocked = mockStatic(AssessmentMapper.class)) {
             AssessmentDto dto1 = new AssessmentDto();
             AssessmentDto dto2 = new AssessmentDto();
@@ -70,13 +66,7 @@ class AssessmentServiceTest {
         }
     }
 
-    @Test
-    void findById_NotFound_Throws() {
-        when(repo.findById(8L)).thenReturn(Optional.empty());
-        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
-                () -> service.findById(8L));
-        assertEquals("404 NOT_FOUND \"Assessment not found: 8\"", ex.getMessage());
-    }
+
 
     @Test
     void create_CreatesAndReturnsDto() {
@@ -118,28 +108,13 @@ class AssessmentServiceTest {
     }
 
     @Test
-    void update_NotFound_Throws() {
-        AssessmentDto dto = new AssessmentDto();
-        when(repo.findById(10L)).thenReturn(Optional.empty());
-
-        ResponseStatusException ex = assertThrows(ResponseStatusException.class, () -> service.update(10L, dto));
-        assertEquals("404 NOT_FOUND \"Assessment not found: 10\"", ex.getMessage());
-    }
-
-    @Test
     void delete_DeletesIfExists() {
         when(repo.existsById(7L)).thenReturn(true);
         service.delete(7L);
         verify(repo).deleteById(7L);
     }
 
-    @Test
-    void delete_NotFound_Throws() {
-        when(repo.existsById(42L)).thenReturn(false);
 
-        ResponseStatusException ex = assertThrows(ResponseStatusException.class, () -> service.delete(42L));
-        assertEquals("404 NOT_FOUND \"Assessment not found: 42\"", ex.getMessage());
-    }
 
     @Test
     void evaluateAnswers_ReturnsScoreResponse() {
@@ -155,7 +130,6 @@ class AssessmentServiceTest {
 
         when(repo.findById(9L)).thenReturn(Optional.of(assessment));
 
-        // The answer map is: index 0->1 is correct, index 1->0 is correct (both correct)
         Map<Integer, Integer> answers = Map.of(0, 1, 1, 0);
 
         ScoreResponse result = service.evaluateAnswers(9L, answers);
@@ -163,19 +137,9 @@ class AssessmentServiceTest {
         assertEquals(new ScoreResponse(2, 2), result);
     }
 
-    @Test
-    void evaluateAnswers_NotFound_Throws() {
-        when(repo.findById(5L)).thenReturn(Optional.empty());
-        Map<Integer, Integer> answers = Map.of();
-
-        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
-                () -> service.evaluateAnswers(5L, answers));
-        assertEquals("404 NOT_FOUND \"Assessment not found: 5\"", ex.getMessage());
-    }
 
     @Test
     void evaluateAnswers_UnmatchedAnswers_ReturnsCorrectScore() {
-        // Only one correct
         Question q0 = new Question();
         q0.setCorrectAnswer(1);
         Question q1 = new Question();

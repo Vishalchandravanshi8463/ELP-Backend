@@ -1,5 +1,6 @@
 package com.elearning.backend.security;
 
+import com.elearning.backend.exception.InvalidJwtAuthenticationException;
 import io.jsonwebtoken.Claims;
 import jakarta.persistence.Column;
 import jakarta.servlet.FilterChain;
@@ -7,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -28,6 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
 
 
+    @Autowired
     public JwtAuthenticationFilter(JwtService jwtService){
         this.jwtService = jwtService;
     }
@@ -39,6 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")){
@@ -62,13 +66,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 log.info("Authentication set in context with authority:"+authority.getAuthority());
             }
         } catch (Exception e){
-            System.out.println("Invalid JWT:" + e.getMessage());
+            log.error("Invalid JWT:" + e.getMessage());
+            throw new InvalidJwtAuthenticationException("Invalid or expired JWT token");
         }
         filterChain.doFilter(request,response);
 
         log.info("JwtAuthenticationFilter Triggered for URL: {} ",request.getRequestURI());
         log.info("Authentication Header:{}", authHeader);
-
     }
 }
 

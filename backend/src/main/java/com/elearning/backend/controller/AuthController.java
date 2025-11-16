@@ -6,6 +6,7 @@ import com.elearning.backend.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +23,10 @@ public class AuthController {
 
     private final AuthService authService;
 
+    @Autowired
     public AuthController(AuthService authService){
         this.authService = authService;
     }
-
 
     @Operation(
             summary = "Register a new user",
@@ -39,9 +40,9 @@ public class AuthController {
 
     @PostMapping("/login")
     public AuthDTO.AuthResponse login(@RequestBody AuthDTO.LoginRequest request){
-
         return authService.login(request);
     }
+
     @GetMapping("/find-account/{email}")
     public ResponseEntity<?> findAccount(@PathVariable String email) {
         log.info("Received email for account search: {}", email);

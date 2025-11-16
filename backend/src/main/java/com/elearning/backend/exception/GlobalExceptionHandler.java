@@ -11,6 +11,21 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
+
+    @ExceptionHandler({UserNotFoundException.class, InvalidPasswordException.class})
+    public ResponseEntity<ErrorResponse> handleAuthenticationFailure(
+            Exception ex, HttpServletRequest request) {
+
+        ErrorResponse response = new ErrorResponse(
+                HttpStatus.UNAUTHORIZED,
+                "Invalid credentials provided.",
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> handleRuntimeException(
             RuntimeException ex, HttpServletRequest request) {
@@ -53,18 +68,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleUserNotFound(
-            Exception ex, HttpServletRequest request) {
-
-        ErrorResponse response = new ErrorResponse(
-                HttpStatus.NOT_FOUND,
-                "Something went wrong!",
-                request.getRequestURI()
-        );
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-    }
+//    @ExceptionHandler(UserNotFoundException.class)
+//    public ResponseEntity<ErrorResponse> handleUserNotFound(
+//            UserNotFoundException ex, HttpServletRequest request) {
+//        ErrorResponse response = new ErrorResponse(
+//                 HttpStatus.UNAUTHORIZED,
+//                "Invalid credentials provided.",
+//                request.getRequestURI()
+//        );
+//        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+//    }
 
     @ExceptionHandler(NoCoursesFoundException.class)
     public ResponseEntity<ErrorResponse> handleNoCoursesFound(
@@ -92,18 +105,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
-    @ExceptionHandler(InvalidPasswordException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidPassword(
-            InvalidPasswordException ex, HttpServletRequest request) {
-
-        ErrorResponse response = new ErrorResponse(
-                HttpStatus.BAD_REQUEST,
-                ex.getMessage(),
-                request.getRequestURI()
-        );
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-    }
+//    @ExceptionHandler(InvalidPasswordException.class)
+//    public ResponseEntity<ErrorResponse> handleInvalidPassword(
+//            InvalidPasswordException ex, HttpServletRequest request) {
+//
+//        ErrorResponse response = new ErrorResponse(
+//                HttpStatus.UNAUTHORIZED,
+//                "Invalid credentials provided.",
+//                request.getRequestURI()
+//        );
+//
+//        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+//    }
 
     @ExceptionHandler(PaymentFailedException.class)
     public ResponseEntity<ErrorResponse> handlePaymentFailed(
@@ -117,4 +130,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
+
+
+    @ExceptionHandler(InvalidJwtAuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidJwtException(
+            InvalidJwtAuthenticationException ex, HttpServletRequest request) {
+
+        ErrorResponse response = new ErrorResponse(
+                HttpStatus.UNAUTHORIZED,
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+
 }

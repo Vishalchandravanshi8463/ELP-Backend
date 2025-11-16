@@ -12,7 +12,7 @@ public class EnrollmentDTO {
     private LocalDate enrollmentDate;
     private Integer progress;
     private String status;
-    // NEW:
+
     private Boolean watched;
     private Boolean done;
     private Integer rating;

@@ -61,20 +61,11 @@ public class EnrollmentController {
         return enrollmentService.markWatched(id, lastWatchedPosition);
     }
 
-
-    /**
-     * Mark enrollment done (the user checked "Done"). Requires watched==true.
-     */
     @PutMapping("/{id}/done")
     public EnrollmentDTO markDone(@PathVariable Long id) {
         return enrollmentService.markDone(id);
     }
 
-
-    /**
-     * Set rating (1..5). Requires done==true.
-     * Body: {"rating": 5}
-     */
     @PutMapping("/{id}/rating")
     public EnrollmentDTO setRating(@PathVariable Long id, @RequestBody Integer rating) {
         return enrollmentService.setRating(id, rating);

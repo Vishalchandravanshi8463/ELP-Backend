@@ -91,7 +91,7 @@ public class AuthService {
     public void updatePassword(String email, String newPassword) {
         Optional<User> userOpt = userRepo.findByEmail(email.trim().toLowerCase());
         userOpt.ifPresent(user -> {
-            user.setPassword(passwordEncoder.encode(newPassword)); // Hash the password
+            user.setPassword(passwordEncoder.encode(newPassword));
             userRepo.save(user);
         });
     }

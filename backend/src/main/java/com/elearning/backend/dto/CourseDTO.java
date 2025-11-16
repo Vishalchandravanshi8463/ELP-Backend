@@ -17,7 +17,6 @@ public class CourseDTO {
     private String preRequisite;
     private boolean enrolled = false;
 
-    // NEw:
     private Double avgRating;
     private Long studentsCount;
 }
